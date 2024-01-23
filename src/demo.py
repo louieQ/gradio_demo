@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import gradio as gr
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications.mobilenet_v2 import (MobileNetV2,
@@ -23,15 +24,17 @@ def classify_face(image_path):
     # Check if any of the top predictions contain a face label
     for _, label, _ in decoded_predictions[0]:
         if 'face' in label.lower():
-            return True
+            return "Face Detected!"
 
-    return False
+    return "No Face Detected..."
 
-# Example usage
-image_path = Path('test/resources/imgs/RandomFace.jpg')
-result = classify_face(image_path)
+demo = gr.Interface(
+    title="Face Classifier",
+    description="Classify whether an image contains a face or not",
+    article="For more information, check out the `/docs` endpoint.",
+    fn=classify_face,
+    inputs=[gr.Image(type="filepath")],
+    outputs=["text"],
+)
 
-if result:
-    print("The image contains a face.")
-else:
-    print("No face detected in the image.")
+demo.launch()
